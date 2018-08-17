@@ -1,0 +1,110 @@
+---
+title: "Euro Area -  Key Economic Indicators"
+author: "Juanma Martinez"
+output: 
+  flexdashboard::flex_dashboard
+    
+---
+
+
+
+This flexdashboard has been written in [R Markdown](http://rmarkdown.rstudio.com), with **R** code chunks that use the following packages  [Dplyr](https://dplyr.tidyverse.org/), [readr](https://cran.r-project.org/web/packages/readr/index.html), [xts](https://cran.r-project.org/web/packages/xts/index.html), [dygraphs](https://rstudio.github.io/dygraphs/)
+
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(readr)
+library(xts)
+library(dygraphs)
+
+## GDP
+
+library(readr)
+GDP <- read_csv("GDP_Quarter.csv")
+View(GDP)
+
+colnames(GDP)
+GDP <- as.xts(GDP, order.by=as.Date(GDP$Date,format="%d/%m/%Y"))
+
+colnames(GDP)[colnames(GDP)=="GDP volume growth"] <- "GDP"
+
+View(GDP)
+
+## Inflation
+
+Inflation_ECB <- read_csv("Inflation_ECB.csv")
+View(Inflation_ECB)
+
+Inflation_ECB  <- as.xts(Inflation_ECB, order.by=as.Date(Inflation_ECB$Month_xts,format="%d/%m/%Y"))
+
+names(Inflation_ECB)[2]<- "Inflation"
+
+## Productivity
+
+Labour_productivity <- read_csv("Labour productivity.csv")
+View(Labour_productivity)
+
+Labour_productivity  <- as.xts(Labour_productivity, order.by=as.Date(Labour_productivity$X3,format="%d/%m/%Y"))
+
+names(Labour_productivity)[2]<-"Labour_productivity"
+
+## Unemployment
+
+
+Unemployment <- read_csv("Unemployment.csv")
+View(Unemployment)
+Unemployment_2<- select(Unemployment, 1:3)
+
+Unemployment_3<-Unemployment_2[complete.cases(Unemployment_2),]
+View(Unemployment_3)
+Unemployment_3 <- as.xts(Unemployment_3, order.by=as.Date(Unemployment_3$Month_xts,format="%d/%m/%Y"))
+
+```
+
+Data source: [European Central Bank](http://sdw.ecb.europa.eu/).
+
+For code: [Github account](https://github.com/JuanmaMN/Flexdashboard)
+
+## ECB
+
+### GDP volume growth
+
+```{r echo=FALSE}
+
+dygraph(GDP$GDP) %>%  dyAxis("y", label = "GDP", valueRange = c(-6, 5.5))%>% dyOptions(fillGraph = TRUE, fillAlpha = 0.4, colors = RColorBrewer::brewer.pal(4, "Paired"))
+
+
+```
+
+
+### Inflation
+
+```{r echo=FALSE}
+
+dygraph(Inflation_ECB$Inflation) %>%  dyAxis("y", label = "Inflation", valueRange = c(-1, 4.5))%>% dyOptions(fillGraph = TRUE, fillAlpha = 0.4, colors = RColorBrewer::brewer.pal(4, "Paired"))
+
+
+```
+
+## Other
+
+### Labour Productivity
+
+```{r echo = FALSE}
+
+dygraph(Labour_productivity$Labour_productivity) %>%  dyAxis("y", label = "Labour productivity", valueRange = c(-4.5, 4))%>% dyOptions(fillGraph = TRUE, fillAlpha = 0.4, colors = RColorBrewer::brewer.pal(4, "Paired"))
+
+
+```
+
+
+### Unemployment rate
+
+```{r echo = FALSE}
+
+dygraph(Unemployment_3$Unemployment) %>%  dyAxis("y", label = "Unemployment", valueRange = c(6,13))%>% dyOptions(fillGraph = TRUE, fillAlpha = 0.4, colors = RColorBrewer::brewer.pal(4, "Paired"))
+
+
+```
+
