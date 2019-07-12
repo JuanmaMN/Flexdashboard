@@ -19,3 +19,6 @@ RPubs - [link](http://rpubs.com/Juanma7/428071) Resolution is not great
 
 
 ## Life Expectancy
+
+
+<img width="933" alt="Flexdashboard - Life Expectancy" src="https://user-images.githubusercontent.com/37122520/61136302-467dcd00-a4bb-11e9-85f1-0699523fcbb4.png">
