@@ -16,3 +16,6 @@ RPbubs - [link](http://rpubs.com/Juanma7/412833)
 
 
 RPubs - [link](http://rpubs.com/Juanma7/428071) Resolution is not great
+
+
+## Life Expectancy
