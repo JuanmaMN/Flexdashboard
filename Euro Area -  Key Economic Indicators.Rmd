@@ -45,7 +45,7 @@ names(Inflation_ECB)[2]<- "Inflation"
 Labour_productivity <- read_csv("Labour productivity.csv")
 View(Labour_productivity)
 
-Labour_productivity  <- as.xts(Labour_productivity, order.by=as.Date(Labour_productivity$X3,format="%d/%m/%Y"))
+Labour_productivity  <- as.xts(Labour_productivity, order.by=as.Date(Labour_productivity$Date,format="%d/%m/%Y"))
 
 names(Labour_productivity)[2]<-"Labour_productivity"
 
@@ -59,6 +59,7 @@ Unemployment_2<- select(Unemployment, 1:3)
 Unemployment_3<-Unemployment_2[complete.cases(Unemployment_2),]
 View(Unemployment_3)
 Unemployment_3 <- as.xts(Unemployment_3, order.by=as.Date(Unemployment_3$Month_xts,format="%d/%m/%Y"))
+
 
 ```
 
