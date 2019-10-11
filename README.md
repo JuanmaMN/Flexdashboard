@@ -36,3 +36,5 @@ RPubs - [link](http://rpubs.com/Juanma7/428071) Resolution is not great
 
 ### **Regional Trade Analysis**
 <br>
+
+<img width="954" alt="Flexdashboard" src="https://user-images.githubusercontent.com/37122520/66649854-18796780-ec27-11e9-9ebb-e18cc6572ff7.png">
