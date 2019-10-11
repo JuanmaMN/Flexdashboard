@@ -29,7 +29,7 @@ RPubs - [link](http://rpubs.com/Juanma7/428071) Resolution is not great
 ### **Life Expectancy**
 <br>
 
-<img width="933" alt="Flexdashboard - Life Expectancy" src="https://user-images.githubusercontent.com/37122520/61136302-467dcd00-a4bb-11e9-85f1-0699523fcbb4.png">
+<img width="960" alt="Life Expectancy" src="https://user-images.githubusercontent.com/37122520/66650029-86be2a00-ec27-11e9-96fb-baad63a3832f.png">
 
 <br>
 <br>
@@ -37,4 +37,5 @@ RPubs - [link](http://rpubs.com/Juanma7/428071) Resolution is not great
 ### **Regional Trade Analysis**
 <br>
 
-<img width="954" alt="Flexdashboard" src="https://user-images.githubusercontent.com/37122520/66649854-18796780-ec27-11e9-9ebb-e18cc6572ff7.png">
+<img width="959" alt="Flexdashboard" src="https://user-images.githubusercontent.com/37122520/66650033-8de53800-ec27-11e9-807d-2139d2766667.png">
+
