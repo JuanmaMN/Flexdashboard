@@ -1,0 +1,311 @@
+---
+title: "Regional Trade Analysis"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(tidyr)
+library(dplyr)
+library(plotly)
+library(scales)
+library(readr)
+library (tidyverse)
+library(hrbrthemes)
+library (ggridges)
+
+Exports <- read_excel("Exports.xlsx", col_types = c("text", 
+                                                    "text", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric", 
+                                                    "numeric", "numeric", "numeric", "numeric"))
+
+
+names(Exports)[1]<- "Region"
+
+
+Exports_gather<- Exports%>% select(1,`2000`, `2005`, `2017`)
+
+names(Exports_gather)[2]<- "Second"
+names(Exports_gather)[3]<- "Third"
+names(Exports_gather)[4]<- "Fourth"
+
+
+Exports2<-Exports_gather %>% filter (Region %in% c("Europe & Central Asia", "European Union", "Euro area",
+                                                    "East Asia & Pacific",
+                                                    "North America",
+                                                    "Latin America & Caribbean",
+                                                    "Middle East & North Africa",
+                                                    
+                                                    "Sub-Saharan Africa",
+                                                    "South Asia")) %>%
+  group_by(Region)%>%
+  summarize(total_2000=sum(round(Second/1e6,0), na.rm = TRUE),
+            total_2005=sum(round(Third/1e6,0), na.rm = TRUE),
+            total_2017=sum(round(Fourth/1e6,0), na.rm = TRUE))
+
+
+#Order the regions by Exports volume
+
+
+Exports2$Region<- factor(Exports2$Region, levels = c("Sub-Saharan Africa","South Asia", "Latin America & Caribbean", "Middle East & North Africa",
+                                                       "North America",
+                                                       "Euro area",
+                                                       "East Asia & Pacific",
+                                                       "European Union",
+                                                       "Europe & Central Asia"))
+
+
+
+### For Gt table
+
+
+Exports_join_3<- Exports%>%select(Region, `2000`,`2005`,`2010`, `2017`)%>% 
+  filter (Region %in% c("Europe & Central Asia", "European Union", "Euro area",
+                         "East Asia & Pacific",
+                         "North America",
+                         "Latin America & Caribbean",
+                         "Middle East & North Africa",
+                         "Sub-Saharan Africa",
+                         "South Asia")) 
+
+
+names(Exports_join_3)[2]<- "Second"
+names(Exports_join_3)[3]<- "Third"
+names(Exports_join_3)[4]<- "Fourth"
+names(Exports_join_3)[5]<- "Fifth"
+
+
+Exports_join_3<-Exports_join_3%>% group_by(Region)%>%
+  summarize(total_2000_Million=sum(round(Second/1e6,0), na.rm = TRUE),
+            total_2005_Million=sum(round(Third/1e6,0), na.rm = TRUE),
+            total_2010_Million=sum(round(Fourth/1e6,0), na.rm = TRUE),
+            total_2017_Million=sum(round(Fifth/1e6,0), na.rm = TRUE))
+
+
+
+
+
+gt<-Exports_join_3%>%
+  mutate(Increase=(total_2017_Million-total_2000_Million)/total_2000_Million)
+
+
+
+
+
+
+
+```
+
+Regional Trade Analysis  - Exports of goods and services (current Million US$) {data-orientation=rows}
+=====================================  
+
+Column {data-width=200, data-height=200}
+-------------------------------------
+
+###
+
+**Data and Analysis**
+
+The below examples provide an analysis of Exports by region since 2000.
+
+
+The individual analyses have been published on my [Twitter account](https://twitter.com/Juanma_MN).
+
+
+Data source used: [World bank](https://data.worldbank.org/).
+
+
+
+###
+
+**Code, questions and feedback**
+
+
+* The code for this article is publish in my [github account](https://github.com/JuanmaMN/Flexdashboard).  
+
+* Please feel free to reach out for any question or feedback.
+
+Column {data-width=800, data-height=800}
+-------------------------------------
+
+### Regional Trade Analysis  - Exports of goods and services (current Million US$)
+
+```{r echo=FALSE}
+
+
+ggplot() +
+ 
+  geom_segment(
+    data = gather(Exports2, measure, val, -Region) %>% 
+      group_by(Region) %>% 
+      top_n(-1) %>% 
+      slice(1) %>%
+      ungroup(),
+    aes(x = 0, xend = val, y = Region, yend = Region),
+    linetype = "blank", size = 0.2, color = "gray80"
+  ) +
+  
+  geom_segment(
+    data = gather(Exports2, measure, val, -Region) %>% 
+      group_by(Region) %>% 
+      summarise(start = range(val)[1], end = range(val)[2]) %>% 
+      ungroup(),
+    aes(x = start, xend = end, y = Region, yend = Region),
+    color = "gray80", size = 1
+  ) +
+  # reshape the data frame & plot the points
+  geom_point(
+    data = gather(Exports2, measure, value, -Region),
+    aes(value, Region, color = measure), 
+    size = 2
+  )  + 
+  #geom_text(data = filter(Exports2, Region== "East Asia & Pacific"),
+  # aes(x = total_2000, y = Region),
+  # label = "2000", fontface = "bold",
+  # color = "#F7BC08",
+  #vjust = -2) +
+  #geom_text(data = filter(Exports2, Region == "East Asia & Pacific"),
+  #aes(x = total_2005, y = Region),
+  #label = "2005", fontface = "bold",
+  #color = "#F7BC08",
+  #vjust = -2)  +
+  #geom_text(data = filter(Exports2, Region == "East Asia & Pacific"),
+#aes(x = total_2015, y = Region),
+#label = "2015", fontface = "bold",
+#color = "#F7BC08",
+#vjust = -2) +
+
+geom_text(data = filter(Exports2, Region== "Europe & Central Asia"),
+          aes(x = total_2000, y = Region),
+          label = "2000", fontface = "bold",
+          color = "#F7BC08",
+          vjust = -2,
+          size = 2) +
+  geom_text(data = filter(Exports2, Region == "Europe & Central Asia"),
+            aes(x = total_2005, y = Region),
+            label = "2005", fontface = "bold",
+            color = "#F7BC08",
+            vjust = -2,
+            size = 2)  +
+  geom_text(data = filter(Exports2, Region == "Europe & Central Asia"),
+            aes(x = total_2017, y = Region),
+            label = "2017", fontface = "bold",
+            color = "#F7BC08",
+            vjust = -2,
+            size = 2) +
+  theme_ipsum_rc(grid="X")+
+  labs(x = "current Million US$",y = "")   + theme(legend.position = "none")  + 
+  theme(axis.text.x = element_text(size = 6),
+        axis.title.x=element_text(size=4,face="bold"),
+        axis.text.y = element_text(size = 6)) + scale_x_continuous(label=comma) 
+
+
+
+
+
+
+
+```
+
+
+
+### Regional Trade Analysis  - Exports of goods and services (current Million US$)
+
+```{r echo=FALSE}
+library(gt)
+
+
+gt$Region<- factor(gt$Region, levels = c("Sub-Saharan Africa","South Asia", "Latin America & Caribbean", "Middle East & North Africa",
+                                                       "North America",
+                                                       "Euro area",
+                                                       "East Asia & Pacific",
+                                                       "European Union",
+                                                       "Europe & Central Asia"))
+
+gt_2<-gt[order(-gt$total_2017_Million),] 
+
+gt_Exports<- gt_2 %>% gt(
+  rowname_col = "Region",
+)%>%
+  tab_header(
+    title = md("**Region** Exports"),
+    subtitle = md("Exports of goods and services (current Million US$). World exports show a higher increase since 2000")
+  ) %>% 
+  fmt_percent(
+    columns = vars(`Increase`),
+    decimals = 
+  ) %>%
+  fmt_number(
+    columns = vars(`total_2000_Million`),
+    decimals = 0
+  ) %>%
+  fmt_number(
+    columns = vars(`total_2005_Million`),
+    decimals = 0
+  ) %>%
+  fmt_number(
+    columns = vars(`total_2010_Million`),
+    decimals = 0
+  ) %>%
+  fmt_number(
+    columns = vars(`total_2017_Million`),
+    decimals = 0
+  ) %>%
+  tab_footnote(
+    footnote = "Exports by Region (Millions)",
+    locations = cells_title(groups = "subtitle")
+  ) %>%
+  tab_source_note(
+    source_note = md(
+      "Source:  [data.worldbank.org](data.worldbank.org).")
+  )  %>%
+  tab_stubhead_label(label = md("**Region**")) %>%
+  tab_options(
+    table.width = pct(100),
+    #table.background.color = "lightgray",
+    row.padding = px(5),
+    heading.title.font.size = "small",
+    heading.subtitle.font.size = "small",
+    heading.background.color = "red",
+    column_labels.background.color = "lightgray"
+  ) %>%
+  tab_spanner(
+    label = md("Comparison"),
+    columns = vars(`Increase`)
+  ) %>%
+  data_color(
+    columns = vars(`Increase`),
+    colors = scales::col_numeric(
+      palette = c(
+        "GnBu"),
+      domain = c(-0.4, 1, 5.8))
+  ) %>%
+  
+  cols_label(
+    total_2000_Million = md("2000"),
+    total_2005_Million = md("2005"),
+    total_2010_Million = md("2010"),
+    total_2017_Million = md("2017"),
+    `Increase`= md("2000 VS 2017 - Increase")
+  )
+
+gt_Exports
+
+```
